@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, createRef } from "react";
 import { list } from "../helpers/APIRoutes";
+import { deleteStudent } from "../helpers/APIRoutes";
 import axios from "axios";
 import StudentComponent from "./StudentComponent";
 
@@ -12,8 +13,14 @@ function StudentList() {
       setStudents(results.data);
     };
     fetchStudents();
-  }, []);
-  console.log(students);
+  }, [students]);
+
+  const deleteStudent = async (id) => {
+    await axios.delete(`http://localhost:8080/delete/${id}`);
+    const results = await axios.get(list);
+    setStudents(results.data);
+    console.log(id);
+  };
 
   return (
     <div className="student-list">
@@ -22,10 +29,11 @@ function StudentList() {
           <StudentComponent
             studentLastName={student.lastName}
             studentFirstName={student.firstName}
+            studentId={student.id}
+            deleteStudent={deleteStudent}
           />
         );
       })}
-      {/* <StudentComponent /> */}
     </div>
   );
 }
